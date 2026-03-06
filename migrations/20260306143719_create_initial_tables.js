@@ -28,7 +28,7 @@ exports.up = function (knex) {
       })
 
       // SHIPMENTS TABLE
-      .createShipments("shipments", (table) => {
+      .createTable("shipments", (table) => {
         table.increments("id").primary();
         table.string("tracking_number").unique().notNullable();
 
