@@ -12,7 +12,7 @@ class ShipperService {
   async getShipperById(id) {
     return Shipper.query()
       .findById(id)
-      .withGraphFetched("shipments") // this makes the shipments data available.
+      .withGraphFetched("shipments.[carrier]") // this makes the shipments data available along with their respective carriers through objective's highly optimized batch queries.
       .throwIfNotFound();
   }
 

@@ -12,7 +12,7 @@ class Carrier extends BaseModel {
         relation: Model.HasManyRelation,
         modelClass: Shipment,
         join: {
-          from: "carrier.id",
+          from: "carriers.id",
           to: "shipments.carrierId",
         },
       },

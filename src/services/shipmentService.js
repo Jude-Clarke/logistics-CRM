@@ -16,10 +16,17 @@ class ShipmentService {
       .throwIfNotFound();
   }
   async updateShipment(id, data) {
-    return Shipment.query()
-      .patchAndFetchById(id, data)
-      .withGraphFetched("[shipper, carrier]") // refresh relations in case ids changed
-      .throwIfNotFound();
+    const query = Shipment.query().patchAndFetchById(id);
+    const relationsToRefresh = [];
+    if (data.shipperId) relationsToRefresh.push("shipper");
+    if (data.carrierId) relationsToRefresh.push("carrier");
+
+    if (relationsToRefresh.length > 0) {
+      // here, withGraphFetched modifies the internal state of the query before I return it
+      query.withGraphFetched(`[${relationsToRefresh.join(", ")}]`);
+    }
+
+    return query.throwIfNotFound();
   }
   async softDeleteShipment(id) {
     const shipment = await this.getShipmentDetails(id);

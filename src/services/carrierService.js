@@ -10,6 +10,12 @@ class CarrierService {
   async getCarrierById(id) {
     return Carrier.query().findById(id).throwIfNotFound();
   }
+  async getCarrierWithFullShipments(id) {
+    return Carrier.query()
+      .findById(id)
+      .withGraphFetched("shipments.[shipper]") // this gets the shipments and their respective shippers
+      .throwIfNotFound();
+  }
   async updateCarrier(id, data) {
     return Carrier.query().patchAndFetchById(id, data).throwIfNotFound();
   }
