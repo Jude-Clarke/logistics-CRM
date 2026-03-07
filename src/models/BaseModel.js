@@ -1,21 +1,24 @@
 const { Model } = require("objection");
+const { DbErrors } = require("objection-db-errors");
 
-class BaseModel extends Model {
+//wrapping BaseModel with DbErrors gives high-quality error types
+class BaseModel extends DbErrors(Model) {
   // here's where I add the modifier to filter out the soft-deleted data
   static get modifiers() {
     return {
       // return the ones that have not been deleted
       notDeleted(builder) {
-        builder.whereNull(`${this.tableName}.deleted_at`);
+        builder.whereNull(`${this.tableName}.deletedAt`);
       },
     };
   }
+
   // here, I implement a global filter using onBuild so I don't have to add the notDeleted modifier to every query
   static query(...args) {
     return super.query(...args).onBuild((builder) => {
       // If we don't explicitly call .context({includeDeleted: true}), then we filter out soft-deleted records.
       if (!builder.context().includeDeleted) {
-        builder.whereNull(`${this.tableName}.deleted_at`);
+        builder.whereNull(`${this.tableName}.deletedAt`);
       }
     });
   }
@@ -23,7 +26,7 @@ class BaseModel extends Model {
   // here's a method to perform a soft delete instead of a hard one.
   async $softDelete() {
     return this.$query().patch({
-      deleted_at: new Date().toISOString(),
+      deletedAt: new Date().toISOString(),
     });
   }
 
@@ -32,10 +35,31 @@ class BaseModel extends Model {
     // super here calls the original code from objection before running my custom code so that we don't break inherited functionality
     super.$beforeUpdate(opt, queryContext);
 
-    // Never allow the ID to be patched.
+    // NEVER allow the ID to be patched.
     if (this.id) {
       delete this.id;
     }
+  }
+
+  // automatically format dates for MySQL
+  $formatDatabaseJson(json) {
+    // call the original implementation first
+    json = super.$formatDatabaseJson(json);
+
+    // list of date columns to check
+    const dateFields = ["pickupDate", "deliveryDate", "deletedAt"];
+
+    dateFields.forEach((field) => {
+      if (json[field]) {
+        // convert ISO string to MySQL-friendly format: YYYY-MM-DD HH:mm:ss
+        json[field] = new Date(json[field])
+          .toISOString()
+          .slice(0, 19)
+          .replace("T", " ");
+      }
+    });
+
+    return json;
   }
 }
 

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "knexfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
     "joi": "^18.0.2",
     "knex": "^3.1.0",
     "mysql2": "^3.19.0",
-    "objection": "^3.1.5"
+    "objection": "^3.1.5",
+    "objection-db-errors": "^1.1.2"
   }
 }

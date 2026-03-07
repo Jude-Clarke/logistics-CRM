@@ -13,7 +13,7 @@ class Carrier extends BaseModel {
         modelClass: Shipment,
         join: {
           from: "carrier.id",
-          to: "shipments.carrier_id",
+          to: "shipments.carrierId",
         },
       },
     };

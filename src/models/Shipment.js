@@ -15,7 +15,7 @@ class Shipment extends BaseModel {
         relation: Model.BelongsToOneRelation,
         modelClass: Shipper,
         join: {
-          from: "shipments.shipper_id",
+          from: "shipments.shipperId",
           to: "shippers.id",
         },
       },
@@ -23,7 +23,7 @@ class Shipment extends BaseModel {
         relation: Model.BelongsToOneRelation,
         modelClass: Carrier,
         join: {
-          from: "shippments.carrier_id",
+          from: "shipments.carrierId",
           to: "carriers.id",
         },
       },

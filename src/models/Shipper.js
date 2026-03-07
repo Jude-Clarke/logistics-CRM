@@ -6,7 +6,7 @@ class Shipper extends BaseModel {
     return "shippers";
   }
 
-  static get relationShipMappings() {
+  static get relationMappings() {
     const Shipment = require("./Shipment");
 
     return {
@@ -15,7 +15,7 @@ class Shipper extends BaseModel {
         modelClass: Shipment,
         join: {
           from: "shippers.id",
-          to: "shippers.shipment_id",
+          to: "shipments.shipperId",
         },
       },
     };
