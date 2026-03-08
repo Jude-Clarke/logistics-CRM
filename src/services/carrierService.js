@@ -1,24 +1,33 @@
 const Carrier = require("../models/Carrier");
 
 class CarrierService {
-  async getAllCarriers() {
-    return Carrier.query().orderBy("name", "asc");
-  }
+  // CREATE
   async createCarrier(data) {
     return Carrier.query().insert(data);
   }
+
+  // READ
+  async getAllCarriers() {
+    return Carrier.query().orderBy("name", "asc");
+  }
+
   async getCarrierById(id) {
     return Carrier.query().findById(id).throwIfNotFound();
   }
+
   async getCarrierWithFullShipments(id) {
     return Carrier.query()
       .findById(id)
       .withGraphFetched("shipments.[shipper]") // this gets the shipments and their respective shippers
       .throwIfNotFound();
   }
+
+  // UPDATE
   async updateCarrier(id, data) {
     return Carrier.query().patchAndFetchById(id, data).throwIfNotFound();
   }
+
+  // DELETE
   async softDeleteCarrier(id) {
     const carrier = await this.getCarrierById(id);
     return carrier.$softDelete();

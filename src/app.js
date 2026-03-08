@@ -16,10 +16,12 @@ app.use(express.json());
 const shipperRoutes = require("./routes/shipperRoutes");
 const carrierRoutes = require("./routes/carrierRoutes");
 const shipmentRoutes = require("./routes/shipmentRoutes");
+const dashboardRoutes = require("./routes/dashboaardRoutes");
 
 app.use("/api/v1/shippers", shipperRoutes);
 app.use("/api/v1/carriers", carrierRoutes);
 app.use("/api/v1/shipments", shipmentRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 
 // NOT FOUND Route
 app.use((req, res) => {

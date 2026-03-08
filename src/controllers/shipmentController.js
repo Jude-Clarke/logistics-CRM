@@ -2,12 +2,14 @@ const shipmentService = require("../services/shipmentService");
 
 exports.getAllShipments = async (req, res, next) => {
   try {
-    const shipments = await shipmentService.getAllShipments();
+    // req.query captures things like ?search=123&status=pending
+    const shipments = await shipmentService.getAllShipments(req.query);
     res.json(shipments);
   } catch (error) {
     next(error);
   }
 };
+
 exports.createShipment = async (req, res, next) => {
   try {
     const shipment = await shipmentService.createShipment(req.body);
