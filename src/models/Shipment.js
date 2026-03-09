@@ -7,6 +7,11 @@ class Shipment extends BaseModel {
     return "shipments";
   }
 
+  // here I'm defining the dates on this object for the baseModel to format for mySQL
+  static get dateAttributes() {
+    return ["pickupDate", "deliveryDate", "deletedAt"];
+  }
+
   // standard query
   static get modifiers() {
     return {
@@ -32,7 +37,7 @@ class Shipment extends BaseModel {
     };
   }
 
-  // Some pre-db validation
+  // Schema validation
   static get jsonSchema() {
     return {
       type: "object",
@@ -52,17 +57,21 @@ class Shipment extends BaseModel {
         shipperId: { type: "integer" },
         carrierId: { type: ["integer", "null"] },
 
+        //financial
         rate: { type: "number", minimum: 0 },
 
+        // logistics
         origin: { type: "string", minLength: 1, maxLength: 255 },
         destination: { type: "string", minLength: 1, maxLength: 255 },
 
+        // dates
         pickupDate: { type: ["string", "null"], format: "date-time" },
         deliveryDate: { type: ["string", "null"], format: "date-time" },
       },
     };
   }
 
+  // Relation mapping
   static get relationMappings() {
     const Shipper = require("./Shipper");
     const Carrier = require("./Carrier");

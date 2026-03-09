@@ -8,6 +8,7 @@ class CarrierService {
 
   // READ
   async getAllCarriers(filters = {}) {
+    // i added pagination to make working with large amounts of carriers more manageable
     const page = parseInt(filters.page) || 0;
     const limit = parseInt(filters.limit) || 20;
 
@@ -23,11 +24,14 @@ class CarrierService {
           .as("shipmentCount"),
       )
       .orderBy("name", "asc")
-      .page(page, limit);
+      .page(page, limit); // objection makes pagination really easy
   }
 
   async getCarrierById(id) {
-    return Carrier.query().findById(id).throwIfNotFound();
+    return Carrier.query()
+      .findById(id)
+      .modify("basicInfo") // only pulls what's needed for the frontend
+      .throwIfNotFound();
   }
 
   async getCarrierWithShipmentsSummaries(id) {

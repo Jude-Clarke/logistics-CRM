@@ -46,8 +46,8 @@ class DashboardService {
 
         // Active Shipments (Recent Activity)
         Shipment.query()
-          .select("id", "trackingNumber", "status", "rate", "updatedAt")
-          .withGraphFetched("[shipper(basicInfo), carier(basicInfo)]")
+          .modify("summary")
+          .withGraphFetched("[shipper(basicInfo), carrier(basicInfo)]")
           .whereIn("status", activeStatuses)
           .orderBy("updatedAt", "desc")
           .limit(limit),
@@ -56,6 +56,7 @@ class DashboardService {
       shipmentsByStatus: statusCounts, // returns an array of objects
       totalRevenue: parseFloat(totalRevenue.total) || 0, // database will likely return a string, so I make it a float (decimal number) so I can do math with it.
       activeCarriers: parseInt(carrierCount.count) || 0, // same here, but this time I make it an integer. the 0 is the fallback incase the value is null.
+      recentActivity: activeShipments,
       generatedAt: new Date().toISOString(), // timestamp to display "Last updated:"
     };
   }

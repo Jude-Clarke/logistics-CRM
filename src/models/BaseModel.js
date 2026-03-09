@@ -16,7 +16,7 @@ class BaseModel extends DbErrors(Model) {
   // here, I implement a global filter using onBuild so I don't have to add the notDeleted modifier to every query
   static query(...args) {
     return super.query(...args).onBuild((builder) => {
-      // If we don't explicitly call .context({includeDeleted: true}), then we filter out soft-deleted records.
+      // If I don't explicitly call .context({includeDeleted: true}), then I filter out soft-deleted records.
       if (!builder.context().includeDeleted) {
         builder.whereNull(`${this.tableName}.deletedAt`);
       }
@@ -46,12 +46,11 @@ class BaseModel extends DbErrors(Model) {
     // call the original implementation first
     json = super.$formatDatabaseJson(json);
 
-    // list of date columns to check
-    const dateFields = ["pickupDate", "deliveryDate", "deletedAt"];
+    // convert ISO string to MySQL-friendly format: YYYY-MM-DD HH:mm:ss
+    const dateFields = this.constructor.dateAttributes || [];
 
     dateFields.forEach((field) => {
       if (json[field]) {
-        // convert ISO string to MySQL-friendly format: YYYY-MM-DD HH:mm:ss
         json[field] = new Date(json[field])
           .toISOString()
           .slice(0, 19)

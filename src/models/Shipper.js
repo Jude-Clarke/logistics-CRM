@@ -6,6 +6,10 @@ class Shipper extends BaseModel {
     return "shippers";
   }
 
+  static get dateAttributes() {
+    return ["deletedAt"];
+  }
+
   static get modifiers() {
     return {
       basicInfo(builder) {
@@ -14,6 +18,7 @@ class Shipper extends BaseModel {
     };
   }
 
+  // Schema validation
   static get jsonSchema() {
     return {
       type: "object",
@@ -27,6 +32,7 @@ class Shipper extends BaseModel {
     };
   }
 
+  // Relation mapping
   static get relationMappings() {
     const Shipment = require("./Shipment");
 

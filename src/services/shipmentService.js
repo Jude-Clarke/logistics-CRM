@@ -24,7 +24,7 @@ class ShipmentService {
       // here I'm creating the shipment within the transaction
       const newShipment = await Shipment.query(trx)
         .insert(data)
-        .withGraphFetched("[shipper, carrier]");
+        .withGraphFetched("[shipper(basicInfo), carrier(basicInfo)]");
 
       // If I wanted to log the activity here, the transaction would make sure everything completes successfully before going through.
 
@@ -69,7 +69,7 @@ class ShipmentService {
   async getShipmentDetails(id) {
     return Shipment.query()
       .findById(id)
-      .withGraphFetched("[shipper, carrier]")
+      .withGraphFetched("[shipper(basicInfo), carrier(basicInfo)]")
       .throwIfNotFound();
   }
 
@@ -80,10 +80,10 @@ class ShipmentService {
       validateStatus(data.status);
     }
 
-    // use a transaction here to make sure the update and fetching happen in a single, isolated unit of work to avoid potential stale data.
+    // use a transaction here to make sure the update future activity logging/status updates happen in a single, isolated unit of work to avoid potential stale data.
     return transaction(Shipment.knex(), async (trx) => {
       // fetch the standard view so the frontend doesn't show stale data
-      return await Shipment.query(trx)
+      return Shipment.query(trx)
         .patchAndFetchById(id, data)
         .modify("standard")
         .throwIfNotFound();

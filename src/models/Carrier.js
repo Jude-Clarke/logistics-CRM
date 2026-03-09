@@ -1,10 +1,15 @@
 const BaseModel = require("./BaseModel");
 const { Model } = require("objection");
-const CARRIER_STATUS = require("../utils/constants");
+const { CARRIER_STATUS } = require("../utils/constants");
 
 class Carrier extends BaseModel {
   static get tableName() {
     return "carriers";
+  }
+
+  // here I'm defining the dates on this object for the baseModel to format for mySQL
+  static get dateAttributes() {
+    return ["deletedAt"];
   }
 
   static get modifiers() {
@@ -15,6 +20,7 @@ class Carrier extends BaseModel {
     };
   }
 
+  // Schema validation
   static get jsonSchema() {
     return {
       type: "object",
@@ -23,7 +29,12 @@ class Carrier extends BaseModel {
         id: { type: "integer" },
         name: { type: "string", minLength: 1, maxLength: 255 },
 
-        mcNumber: { type: "string", minLength: 1, maxLength: 50 },
+        mcNumber: {
+          type: "string",
+          pattern: "^MC-\d+$",
+          minLength: 1,
+          maxLength: 50,
+        },
 
         status: {
           type: "string",
@@ -33,6 +44,7 @@ class Carrier extends BaseModel {
     };
   }
 
+  // Relation mapping
   static get relationMappings() {
     const Shipment = require("./Shipment");
     return {
