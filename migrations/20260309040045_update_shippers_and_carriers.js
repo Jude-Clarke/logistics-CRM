@@ -20,4 +20,12 @@ exports.up = function (knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {};
+exports.down = function (knex) {
+  return knex.schema
+    .alterTable("shippers", (table) => {
+      table.string("email").nullable().alter();
+    })
+    .alterTable("carriers", (table) => {
+      table.enum("status", ["active", "inactive"]).defaultTo("active").alter();
+    });
+};
