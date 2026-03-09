@@ -1,18 +1,20 @@
 const carrierService = require("../services/carrierService");
 
-exports.getCarriers = async (req, res, next) => {
+// CREATE
+exports.createCarrier = async (req, res, next) => {
   try {
-    const carriers = await carrierService.getAllCarriers();
-    res.json(carriers);
+    const carrier = await carrierService.createCarrier(req.body);
+    res.status(201).json(carrier);
   } catch (error) {
     next(error);
   }
 };
 
-exports.createCarrier = async (req, res, next) => {
+// READ
+exports.getCarriers = async (req, res, next) => {
   try {
-    const carrier = await carrierService.createCarrier(req.body);
-    res.status(201).json(carrier);
+    const carriers = await carrierService.getAllCarriers();
+    res.json(carriers);
   } catch (error) {
     next(error);
   }
@@ -38,6 +40,7 @@ exports.getCarrierWithShipmentsSummaries = async (req, res, next) => {
   }
 };
 
+// UPDATE
 exports.updateCarrier = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -48,6 +51,7 @@ exports.updateCarrier = async (req, res, next) => {
   }
 };
 
+// DELETE
 exports.deleteCarrier = async (req, res, next) => {
   try {
     const { id } = req.params;

@@ -1,6 +1,17 @@
 const shipperService = require("../services/shipperService");
 const ShipperService = require("../services/shipperService");
 
+// CREATE
+exports.createShipper = async (req, res, next) => {
+  try {
+    const shipper = await ShipperService.createShipper(req.body);
+    res.status(201).json(shipper);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// READ
 exports.getShippers = async (req, res, next) => {
   try {
     const shippers = await ShipperService.getAllShippers();
@@ -20,30 +31,23 @@ exports.getShipperById = async (req, res, next) => {
   }
 };
 
-exports.createShipper = async (req, res, next) => {
-  try {
-    const shipper = await ShipperService.createShipper(req.body);
-    res.status(201).json(shipper);
-  } catch (error) {
-    next(error);
-  }
-};
-
-exports.deleteShipper = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    await ShipperService.softDeleteShipper(id);
-    res.status(204).end();
-  } catch (error) {
-    next(error);
-  }
-};
-
+// UPDATE
 exports.updateShipper = async (req, res, next) => {
   try {
     const { id } = req.params;
     const updatedShipper = await shipperService.updateShipper(id, req.body);
     res.json(updatedShipper);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// DELETE
+exports.deleteShipper = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await ShipperService.softDeleteShipper(id);
+    res.status(204).end();
   } catch (error) {
     next(error);
   }

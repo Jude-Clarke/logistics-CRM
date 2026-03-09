@@ -1,20 +1,22 @@
 const shipmentService = require("../services/shipmentService");
 
-exports.getAllShipments = async (req, res, next) => {
-  try {
-    // req.query captures things like ?search=123&status=pending
-    const shipments = await shipmentService.getAllShipments(req.query);
-    res.json(shipments);
-  } catch (error) {
-    next(error);
-  }
-};
-
+// CREATE
 exports.createShipment = async (req, res, next) => {
   try {
     const shipment = await shipmentService.createShipment(req.body);
     // 201 Created
     res.status(201).json(shipment);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// READ
+exports.getAllShipments = async (req, res, next) => {
+  try {
+    // req.query captures things like ?search=123&status=pending
+    const shipments = await shipmentService.getAllShipments(req.query);
+    res.json(shipments);
   } catch (error) {
     next(error);
   }
@@ -30,6 +32,7 @@ exports.getShipmentDetails = async (req, res, next) => {
   }
 };
 
+// UPDATE
 exports.updateShipment = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -40,6 +43,7 @@ exports.updateShipment = async (req, res, next) => {
   }
 };
 
+// DELETE
 exports.deleteShipment = async (req, res, next) => {
   try {
     const { id } = req.params;
