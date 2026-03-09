@@ -7,19 +7,41 @@ class CarrierService {
   }
 
   // READ
-  async getAllCarriers() {
-    return Carrier.query().orderBy("name", "asc");
+  async getAllCarriers(filters = {}) {
+    const page = parseInt(filters.page) || 0;
+    const limit = parseInt(filters.limit) || 20;
+
+    return Carrier.query()
+      .select(
+        "id",
+        "name",
+        "status",
+        // here's I'm adding a subquery that displays the total shipments for each carrier
+        Carrier.relatedQuery("shipments")
+          .count()
+          .castTo("integer")
+          .as("shipmentCount"),
+      )
+      .orderBy("name", "asc")
+      .page(page, limit);
   }
 
   async getCarrierById(id) {
     return Carrier.query().findById(id).throwIfNotFound();
   }
 
-  async getCarrierWithFullShipments(id) {
-    return Carrier.query()
-      .findById(id)
-      .withGraphFetched("shipments.[shipper]") // this gets the shipments and their respective shippers
-      .throwIfNotFound();
+  async getCarrierWithShipmentsSummaries(id) {
+    return (
+      Carrier.query()
+        .findById(id)
+        // here, I'm using modifiers to limit the data to what's necessary
+        .withGraphFetched("shipments(summary).[shipper(basicInfo)]") // this gets the shipments and their respective shippers
+        // Show most recent 10 shipments
+        .modifyGraph("shipments", (builder) => {
+          builder.orderBy("createdAt", "desc").limit(10);
+        })
+        .throwIfNotFound()
+    );
   }
 
   // UPDATE

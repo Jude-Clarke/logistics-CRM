@@ -39,8 +39,9 @@ class ShipmentService {
     // input validation to enforce the enum before sending the query to the db
     validateStatus(status);
 
+    // I'm using custom modifiers in this query to only send get what's necessary.
     const query = Shipment.query()
-      .withGraphFetched("[shipper, carrier]")
+      .withGraphFetched("[shipper(basicInfo), carrier(basicInfo)]")
       .orderBy("createdAt", "desc");
 
     // only add where clauses if the filter exists
@@ -81,25 +82,18 @@ class ShipmentService {
 
     // use a transaction here to make sure the update and fetching happen in a single, isolated unit of work to avoid potential stale data.
     return transaction(Shipment.knex(), async (trx) => {
-      const query = Shipment.query(trx).patchAndFetchById(id, data);
-      const relationsToRefresh = [];
-      if (data.shipperId) relationsToRefresh.push("shipper");
-      if (data.carrierId) relationsToRefresh.push("carrier");
-
-      if (relationsToRefresh.length > 0) {
-        // here, withGraphFetched modifies the internal state of the query before I return it
-        query.withGraphFetched(`[${relationsToRefresh.join(", ")}]`);
-      }
-
-      const updatedShipment = await query.throwIfNotFound();
-
-      return updatedShipment;
+      // fetch the standard view so the frontend doesn't show stale data
+      return await Shipment.query(trx)
+        .patchAndFetchById(id, data)
+        .modify("standard")
+        .throwIfNotFound();
     });
   }
 
   // DELETE
   async softDeleteShipment(id) {
-    const shipment = await this.getShipmentDetails(id);
+    // this could be done with a patch, but I prefer to fetch it first incase I want to log it in an activity log or somewhere.
+    const shipment = await Shipment.query().findById(id).throwIfNotFound();
     return shipment.$softDelete();
   }
 }

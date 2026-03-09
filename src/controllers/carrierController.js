@@ -28,10 +28,10 @@ exports.getCarrierById = async (req, res, next) => {
   }
 };
 
-exports.getCarrierWithFullShipments = async (req, res, next) => {
+exports.getCarrierWithShipmentsSummaries = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const carrier = await carrierService.getCarrierWithFullShipments(id);
+    const carrier = await carrierService.getCarrierWithShipmentsSummaries(id);
     res.json(carrier);
   } catch (error) {
     next(error);
