@@ -31,7 +31,7 @@ class Carrier extends BaseModel {
 
         mcNumber: {
           type: "string",
-          pattern: "^MC-\d+$",
+          pattern: "^MC\\d+$",
           minLength: 1,
           maxLength: 50,
         },

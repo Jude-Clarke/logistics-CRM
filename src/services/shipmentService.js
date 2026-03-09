@@ -34,7 +34,7 @@ class ShipmentService {
 
   // READ
   async getAllShipments(filters = {}) {
-    const { search, status, carrierId } = filters;
+    const { search, status, carrierId, page = 0, pageSize = 10 } = filters;
 
     // input validation to enforce the enum before sending the query to the db
     validateStatus(status);
@@ -63,7 +63,7 @@ class ShipmentService {
       });
     }
 
-    return query;
+    return query.page(page, pageSize);
   }
 
   async getShipmentDetails(id) {
